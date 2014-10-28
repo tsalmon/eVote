@@ -1,6 +1,4 @@
-# projet M2
-
-## Nom de projet : Votalisk
+# ![logo](logo/votalisk.png)  Votalisk
 
 ## Membre du projet
 * Josian Chevalier
