@@ -1,6 +1,6 @@
 # ![logo](logo/votalisk.png)  Votalisk
 
-## Membre du projet
+## Membres du projet
 * Josian Chevalier
 * Vladislav Fitz
 * Quỳnh Nga Nguyễn
