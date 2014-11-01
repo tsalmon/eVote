@@ -1,4 +1,4 @@
-name := "s99"
+name := "votalisk"
 
 version := "1.0"
 
