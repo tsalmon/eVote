@@ -5,3 +5,4 @@
 * Vladislav Fitz
 * Quỳnh Nga Nguyễn
 * Salmon Thomas
+* Mohamed Skhiri
