@@ -10,17 +10,23 @@
 * Mohamed Skhiri
 
 
-Présentation
+Interprétation du sujet
 --------------------
 
 L'objectif de ce framework scala est de fournir un environnement de gestion électoral, il ne s'agit donc que d'un cœur.
 
 L'intérêt étant que l'on puisse, à souhait, y ajouter facilement la méthode électorale (ie son algorithme) voulue pour une application.
 
-Utilisation
+Concept
 -------------
 
 **Votalisk** laisse l'application, qui l'utilise, décider de la configuration des élections, aussi on attendra seulement les données et executer la stratégie fournie par l'utilisateur.
+
+Extensions envisagées
+-------------
+
+Les méthodes d'élections de différens pays et organisations (France, Union Européenne, etc)
+
 
 Diagramme des classes
 ----------------------
