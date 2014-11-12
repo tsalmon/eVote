@@ -27,7 +27,7 @@ class PresidentialElectionsVotingPaper() extends VotingPaper{
     println("Please, choose your candidate \n 1."+input(0)+" \n 2."+input(1)+"  \n 3."+input(2))
     var choice: Int = 0
     try {
-      choice = scala.io.StdIn.readInt()
+      choice = Console.readInt;//scala.io.StdIn.readInt()
     } catch {
       case e: NumberFormatException => println("Wrong choice")
     }
