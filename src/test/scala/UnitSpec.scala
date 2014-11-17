@@ -1,4 +1,4 @@
-package org.p99.scala
+package org.votalisk.scala
 
 import org.scalatest._
 
