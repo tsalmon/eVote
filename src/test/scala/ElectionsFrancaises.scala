@@ -1,23 +1,43 @@
-import Elections._
+
+package ElectionsTest
+
 import org.scalatest._
+import Elections._
+import ElectionsResultProcessing.ElectionsResultProcessing
 
-class Commune(override val name:String) extends LeafDistrict(name){
+import scala.collection.immutable.ListMap
+
+case class Commune(override val name:String) extends LeafDistrict(name){}
+case class Department(override val name:String, communes:Commune*) extends ComposedDistrict[Commune](name, Set(communes: _*)){}
+case class Region(override val name:String, departments:Department*) extends ComposedDistrict[Department](name, Set(departments: _*)){}
+case class Country(override val name:String, regions:Region*) extends ComposedDistrict[Region](name, Set(regions: _*)){}
+
+
+class PresidentialElections(override val candidates:List[Electable], override val votes: List[PresidentialElectionsVotingPaper]) extends Elections(candidates, votes) {
+  type VoteResult = Candidate
 }
 
-class Department(override val name:String) extends ComposedDistrict[Commune](name){
+class PresidentialElectionsResultProcessing extends ElectionsResultProcessing[PresidentialElections]{
+  def calculateResult(elections: PresidentialElections):elections.VoteResult = {
+    val votes : List[PresidentialElectionsVotingPaper] = elections.votes
+    val stats = scala.collection.mutable.Map[Candidate, Int]()
+    for(vote <- votes) {
+      vote.output match {
+        case Some(candidate) =>
+        stats(candidate) = stats.getOrElse(candidate, 0) + 1
+        case _ => ()
+      }
+    }
+    ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys.head
+  }
 }
 
-class Region(override val name:String) extends ComposedDistrict[Department](name){
-}
 
-class Country(override val name:String) extends ComposedDistrict[Region](name){
-}
-
-class PresidentialElectionsVotingPaper() extends VotingPaper{
+class PresidentialElectionsVotingPaper(override  val notificationName: String, override val district: District) extends VotingPaper(notificationName, district){
   type VoteInput = Array[Candidate]
   type VoteOutput = Option[Candidate]
 
-  var input = Array(new Candidate("Adam", "Smith"), new Candidate("John", "Brown"), new Candidate("Leonard", "Bold"))
+  var input = Array[Candidate]()
   var output = None : Option[Candidate]
 
   def isVoted = output != None
@@ -26,77 +46,70 @@ class PresidentialElectionsVotingPaper() extends VotingPaper{
     println("Please, choose your candidate \n 1."+input(0)+" \n 2."+input(1)+"  \n 3."+input(2))
     var choice: Int = 0
     try {
-      choice = Console.readInt;//scala.io.StdIn.readInt()
+      choice = Console.readInt;
     } catch {
       case e: NumberFormatException => println("Wrong choice")
     }
 
     choice match {
-      case x if 1 to input.length contains x => output = Some(input(x-1))
-      case _ => println("Wrong choice"); output = None
+      case x if 1 to input.length contains x =>
+      output = Some(input(x-1))
+
+      case _ =>
+      println("Wrong choice")
+      output = None
     }
   }
 
-  def voteResult = output match {
+  override def toString = output match {
     case Some(output) => output.toString
-    case None => "Not voted"
+    case None => "Blank voting paper"
   }
 }
 
-class PresidentialElectionsManager extends ElectionsManager {
-  type VoteInput = Array[Candidate]
-  type VoteOutput = Option[Candidate]
-  private var votes = Set[VotingPaper]()
+class PresidentialElectionsManager(override val notificationName: String, override val electors: Set[Voting], val candidates: Array[Candidate]) extends ElectionsManager[PresidentialElections, PresidentialElectionsVotingPaper](notificationName, electors) {
+  def createVotingPaper(voting: Voting) = {
+    val votingPaper = new PresidentialElectionsVotingPaper(notificationName, voting.district())
+    votingPaper.input = candidates
+    votingPaper
+  }
 
-  def createVotingPaper(voting: Voting): VotingPaper = new PresidentialElectionsVotingPaper
-  def acceptVotingPaper(votingPaper: VotingPaper) = votes += votingPaper
-
-  def printVotes = println(votes)
-}
-
-class PresidentialElections(override val candidates:List[Electable], override val votes:Set[VotingPaper]) extends Elections(candidates, votes){
-  type VoteResult = Candidate
+  def createElections = {
+    new PresidentialElections(candidates.toList, votes)
+  }
 }
 
 
+class ElectionsTest extends FlatSpec{
+  val paris = Commune("Paris")
+  val strasbourg = Commune("Strasbourg")
+  val france = Country("France", Region("Alsace", Department("Bas-Rhin", strasbourg)), Region("Ile-de-France", Department("Paris", paris)))
 
-class ElectionsFrancaises extends FlatSpec {
-  	"test" should " verifie" in {
-        val france = new Country("France")
+  val candidates = Array(
+    new Candidate("Adam", "Smith"),
+    new Candidate("John", "Brown"),
+    new Candidate("Leonard", "Bold"))
 
-        val alsace = new Region("Alsace")
-        val basRhin = new Department("Bas-Rhin")
-        val strasbourg = new Commune("Strasbourg")
+    val electors:Set[Voting] = Set(
+      new Elector("Parnell", "Marzullo", paris),
+      new Elector("Kendricks", "Galt", paris),
+      new Elector("Margalit", "Sanders", paris),
+      new Elector("Vannie", "O'meara", strasbourg),
+      new Elector("Aime", "Mannion", strasbourg))
 
-        basRhin.addSubunit(strasbourg)
-        alsace.addSubunit(basRhin)
-        france.addSubunit(alsace)
 
+      val manager = new PresidentialElectionsManager("presidentialElections", electors, candidates)
 
-        val ileDeFrance = new Region("Ile-de-France")
-        val parisDept = new Department("Paris")
-        val parisCommune = new Commune("Paris")
+      for (elector <- electors) {
+        val votingPaper = manager.createVotingPaper(elector)
+        votingPaper.vote
+        votingPaper.confirm
+      }
 
-        parisDept.addSubunit(parisCommune)
-        ileDeFrance.addSubunit(parisDept)
-        france.addSubunit(ileDeFrance)
+      manager.printVotes
 
-        val electors = Array(
-          new Elector("Parnell", "Marzullo"),
-          new Elector("Kendricks", "Galt"),
-          new Elector("Margalit", "Sanders"),
-          new Elector("Vannie", "O'meara"),
-          new Elector("Aime", "Mannion"))
+      val elections = manager.createElections
 
-        val manager = new PresidentialElectionsManager
-
-        for (elector <- electors) {
-          val votingPaper = manager.createVotingPaper(elector)
-          votingPaper.vote
-          votingPaper.confirm
-          manager.acceptVotingPaper(votingPaper)
-        }
-
-        manager.printVotes
+      val processing = new PresidentialElectionsResultProcessing()
+      println(processing.calculateResult(elections))
     }
-}
