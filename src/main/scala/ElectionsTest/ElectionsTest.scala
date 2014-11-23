@@ -1,3 +1,4 @@
+/*
 package ElectionsTest
 
 import Elections._
@@ -111,3 +112,4 @@ object ElectionsTest extends App{
   val processing = new PresidentialElectionsResultProcessing()
   println(processing.calculateResult(elections))
 }
+*/
