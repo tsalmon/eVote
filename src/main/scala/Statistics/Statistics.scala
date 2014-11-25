@@ -21,17 +21,10 @@ abstract class Statistics {
 abstract class CandidateResult(val _candidate:Electable){
     var candidate = _candidate;
     var nbVotes : Int;
-    var listVotes : List[VotingPaper]
+    var listVotes : List[VotingPaper] // list votingPaper was voted for this Electable
     var result : Double;
-    def caculateCandidateResult(votingPapers: List[VotingPaper])= {
-      for (voting <- votingPapers){
-        if (voting.toString.contains(_candidate)) {
-          voting::listVotes
-        }
-      }
-      this.result = votingPapers.length / this.listVotes.length *100 
-      this.nbVotes = this.listVotes.length
-    }
+    def addVote(vote : VotingPaper) = vote::listVotes
+    def removeVote(vote: VotingPaper) = listVotes.filter(_ != vote)
 }
 
 abstract class DistrictResult(val _district:District){
