@@ -21,14 +21,16 @@ abstract class Statistics {
 abstract class CandidateResult(val _candidate:Electable){
     var candidate = _candidate;
     var nbVotes : Int;
+    var listVotes : List[VotingPaper]
     var result : Double;
     def caculateCandidateResult(votingPapers: List[VotingPaper])= {
       for (voting <- votingPapers){
         if (voting.toString.contains(_candidate)) {
-          this.nbVotes= this.nbVotes + 1;
+          voting::listVotes
         }
       }
-      this.result = votingPapers.length / this.nbVotes *100 
+      this.result = votingPapers.length / this.listVotes.length *100 
+      this.nbVotes = this.listVotes.length
     }
 }
 
@@ -36,6 +38,7 @@ abstract class DistrictResult(val _district:District){
   
   var nbDistrictVotes: Int
   var districtVotingPapers: List[VotingPaper]
+  
   // List result in this district : List((electable, votes, percent))
   var resultDistrict : List[CandidateResult]; 
   
