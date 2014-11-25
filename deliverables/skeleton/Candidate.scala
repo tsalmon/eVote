@@ -1,5 +1,6 @@
 package Elections
 
+
 class Candidate(override val name:String,
                 override val surname:String,
                 override val assuranceNumber:Int,

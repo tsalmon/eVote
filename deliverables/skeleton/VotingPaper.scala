@@ -17,7 +17,8 @@ abstract class VotingPaper {
     this.confirmed match {
       case true => println("VotingPaper is already finalized and can't be modified")
       case false => performVote
-    }
+    
+	}
 
   def voteResult:String
 
