@@ -19,7 +19,6 @@ abstract class Statistics {
 }
 
 abstract class CandidateResult(val _candidate:Electable){
-    var candidate = _candidate;
     var nbVotes : Int;
     var listVotes : List[VotingPaper] // list votingPaper was voted for this Electable
     var result : Double;
