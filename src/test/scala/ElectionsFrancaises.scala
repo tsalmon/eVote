@@ -138,40 +138,33 @@ class ElectionsTest extends FlatSpec{
     new Elector("Aime", "Mannion", strasbourg)
   )
 
-  "ElectionTest" should "return noting" in {
+  def test_tour(
+      title_election : String,
+      electors : Set[Voting],
+      candidates : Array[Candidate]
+    ): Array[Candidate] = {
+
     val manager1 = new PresidentialElectionsManager(
-      "presidentialElections 1er tour", electors, candidates)
+      title_election, electors, candidates)
 
-    for (elector <- electors) {
-      val votingPaper = manager1.createVotingPaper(elector)
-      votingPaper.vote
-      votingPaper.confirm
-    }
+      for (elector <- electors) {
+        val votingPaper = manager1.createVotingPaper(elector)
+        votingPaper.vote
+        votingPaper.confirm
+      }
 
-    manager1.printVotes
+      manager1.printVotes
 
-    val elections = manager1.createElections
+      val elections = manager1.createElections
 
-    val processing = new PresidentialElectionsResultProcessing()
-    val candidates_1er_tour = processing.calculateResult(elections)
+      val processing = new PresidentialElectionsResultProcessing()
+      processing.calculateResult(elections)
+  }
 
-    println("Resultat 1er tour: " + candidates_1er_tour(0) + " " + candidates_1er_tour(1))
-
-    val manager2 = new PresidentialElectionsManager(
-        "presidentialElections 2e tour", electors, candidates_1er_tour)
-
-    for (elector <- electors) {
-      val votingPaper = manager2.createVotingPaper(elector)
-      votingPaper.vote
-      votingPaper.confirm
-    }
-
-    manager2.printVotes
-
-    val elections2 = manager2.createElections
-    val candidates_2e_tour : Array[Candidate] = processing.calculateResult(elections2)
-
-    println(candidates_2e_tour(0))
-
+  "ElectionTest: Tour" should "return the candidate more selected" in {
+    var resultat = test_tour("elections 1er tour", electors, candidates)
+    println("Resultat premier tour: " + resultat(0) + ", " + resultat(1))
+    resultat = test_tour("elections 2e tour", electors, resultat)
+    println("Resultat deuxieme tour: " + resultat(0))
   }
 }
