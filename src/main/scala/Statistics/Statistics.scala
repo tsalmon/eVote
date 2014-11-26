@@ -2,7 +2,6 @@ package Statistics
 
 import Elections.{District, Electable, VotingPaper, Elections}
 
-
 abstract class Statistics {
    var nbElectionVotes : Int
    var candidateResults : List[CandidateResult]
@@ -17,6 +16,7 @@ abstract class Statistics {
      districtResults.filter(_ != DR);
    }
 }
+
 
 abstract class CandidateResult(val _candidate:Electable){
     var nbVotes : Int;
