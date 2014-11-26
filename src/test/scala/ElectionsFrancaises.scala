@@ -4,36 +4,61 @@ package ElectionsTest
 import org.scalatest._
 import Elections._
 import ElectionsResultProcessing.ElectionsResultProcessing
-
 import scala.collection.immutable.ListMap
 
 case class Commune(override val name:String) extends LeafDistrict(name){}
-case class Department(override val name:String, communes:Commune*) extends ComposedDistrict[Commune](name, Set(communes: _*)){}
-case class Region(override val name:String, departments:Department*) extends ComposedDistrict[Department](name, Set(departments: _*)){}
-case class Country(override val name:String, regions:Region*) extends ComposedDistrict[Region](name, Set(regions: _*)){}
+case class Department(override val name:String, communes:Commune*)
+  extends ComposedDistrict[Commune](name, Set(communes: _*)){}
+case class Region(override val name:String, departments:Department*)
+  extends ComposedDistrict[Department](name, Set(departments: _*)){}
+case class Pays(override val name:String, regions:Region*)
+  extends ComposedDistrict[Region](name, Set(regions: _*)){}
 
-
-class PresidentialElections(override val candidates:List[Electable], override val votes: List[PresidentialElectionsVotingPaper]) extends Elections(candidates, votes) {
-  type VoteResult = Candidate
+class PresidentialElections(
+  override val candidates:List[Electable],
+  override val votes: List[PresidentialElectionsVotingPaper])
+extends Elections(candidates, votes) {
+  type VoteResult = Array[Candidate]
 }
 
 class PresidentialElectionsResultProcessing extends ElectionsResultProcessing[PresidentialElections]{
-  def calculateResult(elections: PresidentialElections):elections.VoteResult = {
-    val votes : List[PresidentialElectionsVotingPaper] = elections.votes
-    val stats = scala.collection.mutable.Map[Candidate, Int]()
-    for(vote <- votes) {
-      vote.output match {
-        case Some(candidate) =>
-        stats(candidate) = stats.getOrElse(candidate, 0) + 1
-        case _ => ()
+
+  var tour : Int = 0
+
+  def calculateResult(elections: PresidentialElections): elections.VoteResult = {
+    if( tour == 1){
+      val votes : List[PresidentialElectionsVotingPaper] = elections.votes
+      val stats = scala.collection.mutable.Map[Candidate, Int]()
+      for(vote <- votes) {
+        vote.output match {
+          case Some(candidate) =>
+            stats(candidate) = stats.getOrElse(candidate, 0) + 1 //add 1 at candidate
+          case _ => ()
+        }
       }
+      Array[Candidate](ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys.head)
+      //Set[Candidate](t(0), t(1))
+    } else {
+      tour = tour + 1
+      val votes : List[PresidentialElectionsVotingPaper] = elections.votes
+      val stats = scala.collection.mutable.Map[Candidate, Int]()
+      for(vote <- votes) {
+        vote.output match {
+          case Some(candidate) =>
+          stats(candidate) = stats.getOrElse(candidate, 0) + 1
+          case _ => ()
+        }
+      }
+      val t =  ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys.toArray
+      //println(t(0))
+      //println(t(1))
+      //ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys.head
+      Array[Candidate](t(0), t(1))
     }
-    ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys.head
   }
 }
 
-
-class PresidentialElectionsVotingPaper(override  val notificationName: String, override val district: District) extends VotingPaper(notificationName, district){
+class PresidentialElectionsVotingPaper( override  val notificationName: String, override val district: District) extends VotingPaper(notificationName, district){
   type VoteInput = Array[Candidate]
   type VoteOutput = Option[Candidate]
 
@@ -42,8 +67,12 @@ class PresidentialElectionsVotingPaper(override  val notificationName: String, o
 
   def isVoted = output != None
 
-  def performVote: Unit ={
-    println("Please, choose your candidate \n 1."+input(0)+" \n 2."+input(1)+"  \n 3."+input(2))
+  def performVote: Unit = {
+    var str_votes: String = "Please, choose your candidate\n"
+    for(i <- 0 to input.length - 1){
+      str_votes = str_votes + ""+i+"."+input(i)+"\n"
+    }
+    println(str_votes)
     var choice: Int = 0
     try {
       choice = Console.readInt;
@@ -52,8 +81,8 @@ class PresidentialElectionsVotingPaper(override  val notificationName: String, o
     }
 
     choice match {
-      case x if 1 to input.length contains x =>
-      output = Some(input(x-1))
+      case x if 0 <= x && x < input.length+1 =>
+      output = Some(input(x))
 
       case _ =>
       println("Wrong choice")
@@ -67,7 +96,8 @@ class PresidentialElectionsVotingPaper(override  val notificationName: String, o
   }
 }
 
-class PresidentialElectionsManager(override val notificationName: String, override val electors: Set[Voting], val candidates: Array[Candidate]) extends ElectionsManager[PresidentialElections, PresidentialElectionsVotingPaper](notificationName, electors) {
+class PresidentialElectionsManager( override val notificationName: String, override val electors: Set[Voting],val candidates: Array[Candidate]) extends ElectionsManager[PresidentialElections, PresidentialElectionsVotingPaper](notificationName, electors) {
+
   def createVotingPaper(voting: Voting) = {
     val votingPaper = new PresidentialElectionsVotingPaper(notificationName, voting.district())
     votingPaper.input = candidates
@@ -79,37 +109,69 @@ class PresidentialElectionsManager(override val notificationName: String, overri
   }
 }
 
-
 class ElectionsTest extends FlatSpec{
   val paris = Commune("Paris")
-  val strasbourg = Commune("Strasbourg")
-  val france = Country("France", Region("Alsace", Department("Bas-Rhin", strasbourg)), Region("Ile-de-France", Department("Paris", paris)))
+  val villejuif = Commune("Villejuif");
+  val strasbourg = Commune("Strasbourg");
 
-  val candidates = Array(
+  val regTest = Region("region_test",
+                        Department("dep1", paris),
+                        Department("dep2", villejuif));
+
+  val france = Pays("France",
+                        Region("Alsace",
+                          Department("Bas-Rhin", strasbourg)),
+                        Region("Ile-de-France",
+                          Department("Paris", paris)))
+
+  val candidates : Array[Candidate] = Array(
     new Candidate("Adam", "Smith"),
     new Candidate("John", "Brown"),
-    new Candidate("Leonard", "Bold"))
+    new Candidate("Leonard", "Bold")
+  )
 
-    val electors:Set[Voting] = Set(
-      new Elector("Parnell", "Marzullo", paris),
-      new Elector("Kendricks", "Galt", paris),
-      new Elector("Margalit", "Sanders", paris),
-      new Elector("Vannie", "O'meara", strasbourg),
-      new Elector("Aime", "Mannion", strasbourg))
+  val electors:Set[Voting] = Set(
+    new Elector("Parnell", "Marzullo", paris),
+    new Elector("Kendricks", "Galt", paris),
+    new Elector("Margalit", "Sanders", paris),
+    new Elector("Vannie", "O'meara", strasbourg),
+    new Elector("Aime", "Mannion", strasbourg)
+  )
 
+  "ElectionTest" should "return noting" in {
+    val manager1 = new PresidentialElectionsManager(
+      "presidentialElections 1er tour", electors, candidates)
 
-      val manager = new PresidentialElectionsManager("presidentialElections", electors, candidates)
-
-      for (elector <- electors) {
-        val votingPaper = manager.createVotingPaper(elector)
-        votingPaper.vote
-        votingPaper.confirm
-      }
-
-      manager.printVotes
-
-      val elections = manager.createElections
-
-      val processing = new PresidentialElectionsResultProcessing()
-      println(processing.calculateResult(elections))
+    for (elector <- electors) {
+      val votingPaper = manager1.createVotingPaper(elector)
+      votingPaper.vote
+      votingPaper.confirm
     }
+
+    manager1.printVotes
+
+    val elections = manager1.createElections
+
+    val processing = new PresidentialElectionsResultProcessing()
+    val candidates_1er_tour = processing.calculateResult(elections)
+
+    println("Resultat 1er tour: " + candidates_1er_tour(0) + " " + candidates_1er_tour(1))
+
+    val manager2 = new PresidentialElectionsManager(
+        "presidentialElections 2e tour", electors, candidates_1er_tour)
+
+    for (elector <- electors) {
+      val votingPaper = manager2.createVotingPaper(elector)
+      votingPaper.vote
+      votingPaper.confirm
+    }
+
+    manager2.printVotes
+
+    val elections2 = manager2.createElections
+    val candidates_2e_tour : Array[Candidate] = processing.calculateResult(elections2)
+
+    println(candidates_2e_tour(0))
+
+  }
+}
