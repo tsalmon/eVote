@@ -21,3 +21,9 @@ project/plugins/project/
 .DS_Store
 .classpath
 .project
+
+
+# IDEA
+eVote.iml
+.idea/
+Thumbs.db
