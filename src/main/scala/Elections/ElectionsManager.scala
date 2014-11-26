@@ -14,7 +14,6 @@ abstract class ElectionsManager[ElectionsType <: Elections, VotingPaperType <: V
       case _ => ()
     }
   }
-
   def createElections:ElectionsType
 
   def printVotes = println(votes)

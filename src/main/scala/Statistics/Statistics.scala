@@ -46,6 +46,7 @@ abstract class DistrictResult(val _district:District){
         }
       }
     } 
+	
     
   def add_resultDistrict(CR: CandidateResult) = CR::resultDistrict
   

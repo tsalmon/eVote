@@ -170,8 +170,7 @@ class ElectionsTest extends FlatSpec{
 
     val elections2 = manager2.createElections
     val candidates_2e_tour : Array[Candidate] = processing.calculateResult(elections2)
-
-    println(candidates_2e_tour(0))
+	println(candidates_2e_tour(0))
 
   }
 }
