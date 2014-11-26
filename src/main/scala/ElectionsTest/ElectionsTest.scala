@@ -96,7 +96,6 @@ object ElectionsTest extends App{
     new Elector("Vannie", "O'meara", strasbourg),
     new Elector("Aime", "Mannion", strasbourg))
 
-
   val manager = new PresidentialElectionsManager("presidentialElections", electors, candidates)
 
   for (elector <- electors) {
