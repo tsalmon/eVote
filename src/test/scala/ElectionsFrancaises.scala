@@ -155,11 +155,17 @@ class ElectionsTest extends FlatSpec{
 
       manager1.printVotes
 
+<<<<<<< HEAD
       val elections = manager1.createElections
 
       val processing = new PresidentialElectionsResultProcessing()
       processing.calculateResult(elections)
   }
+=======
+    val elections2 = manager2.createElections
+    val candidates_2e_tour : Array[Candidate] = processing.calculateResult(elections2)
+	println(candidates_2e_tour(0))
+>>>>>>> 102ad14be6294aa5ed7f17f1fd4a8283373517bf
 
   "ElectionTest: Tour" should "return the candidate more selected" in {
     var resultat = test_tour("elections 1er tour", electors, candidates)
