@@ -1,9 +1,9 @@
-package package Elections
+package Elections
 
 import java.lang.IllegalArgumentException
 
-class SeatVote(val seat: Seat, candidateToCount: Map[Candidate, Int]) extends Vote {
-  private val byParty: Map[Party, Map[Candidate, Int]] = candidateToCount.groupBy(_._1.party)
+class SeatVote(val seat: Seat, candidateToCount: Map[Candidates, Int]) extends Vote {
+  private val byParty: Map[Party, Map[Candidates, Int]] = candidateToCount.groupBy(_._1.party)
 
   /**
    * @return the winning party
@@ -23,7 +23,7 @@ class SeatVote(val seat: Seat, candidateToCount: Map[Candidate, Int]) extends Vo
   /**
    * @return the set of candidates that contested this vote
    */
-  val candidates: Set[Candidate] = candidateToCount.keySet
+  val candidates: Set[Candidates] = candidateToCount.keySet
 
   /**
    * @return the candidate(s) for the supplied party
@@ -43,7 +43,7 @@ class SeatVote(val seat: Seat, candidateToCount: Map[Candidate, Int]) extends Vo
     new SeatVote(seat, deltas ++ candidateToCount.map {
       case (candidates: Candidates, count: Int) => {
         val newCount = count + deltas.getOrElse(candidates, 0)
-        if (newCount < 0) throw new IllegalArgumentException(candidate + "->" + newCount)
+        if (newCount < 0) throw new IllegalArgumentException(candidates + "->" + newCount)
         candidates -> newCount
       }
     }.toMap)
