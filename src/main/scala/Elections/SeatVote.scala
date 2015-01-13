@@ -28,7 +28,7 @@ class SeatVote(val seat: Seat, candidateToCount: Map[Candidate, Int]) extends Vo
   /**
    * @return the candidate(s) for the supplied party
    */
-  def candidates(party: Party): Set[Candidate] = byParty.getOrElse(party, Map.empty).keys.toSet
+  def candidates(party: Party): Set[Candidates] = byParty.getOrElse(party, Map.empty).keys.toSet
 
   /**
    * @return the set of parties that contested this vote
@@ -39,12 +39,12 @@ class SeatVote(val seat: Seat, candidateToCount: Map[Candidate, Int]) extends Vo
    * Derives new vote by adjusting counts according to the supplied model
    */
   def project(model: Model): SeatVote = {
-    val deltas: Map[Candidate, Int] = model(this)
+    val deltas: Map[Candidates, Int] = model(this)
     new SeatVote(seat, deltas ++ candidateToCount.map {
-      case (candidate: Candidate, count: Int) => {
-        val newCount = count + deltas.getOrElse(candidate, 0)
+      case (candidates: Candidates, count: Int) => {
+        val newCount = count + deltas.getOrElse(candidates, 0)
         if (newCount < 0) throw new IllegalArgumentException(candidate + "->" + newCount)
-        candidate -> newCount
+        candidates -> newCount
       }
     }.toMap)
   }

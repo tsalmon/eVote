@@ -4,5 +4,5 @@ trait Model {
   /**
    * @return a map of candidate -> count adjustment
    */
-  def apply(vote: SeatVote): Map[Candidate, Int]
+  def apply(vote: SeatVote): Map[Candidates, Int]
 }
