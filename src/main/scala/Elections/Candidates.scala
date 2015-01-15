@@ -12,6 +12,6 @@ case class Party(name: String) extends Candidate {
   override val toString: String = name
 }
 
-case class Person(name: String, party: Party) extends Candidate {
+case class Persone(name: String, party: Party) extends Candidate {
   override val toString: String = name + " (" + party + ")"
 }
