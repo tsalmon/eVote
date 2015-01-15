@@ -16,7 +16,7 @@ class SeatVoteTest extends FlatSpec with Matchers {
     sv(PartyA -> 2).count(PartyB) should be(0)
   }
   should "give correct count for party when candidates are people" in {
-    sv(PersonA -> 2, PersonB -> 3).count(PartyA) should be(2)
+    sv(personeA -> 2, personeB -> 3).count(PartyA) should be(2)
   }
   should "return sum of counts as total" in {
     sv(PartyA -> 2, PartyB -> 1).count should be(3)
@@ -34,13 +34,13 @@ class SeatVoteTest extends FlatSpec with Matchers {
     sv(PartyA -> 2, PartyB -> 2).candidates should be(Set(PartyA, PartyB))
   }
   should "expose set of all candidates when people" in {
-    sv(PersonA -> 2, PersonB -> 2).candidates should be(Set(PersonA, PersonB))
+    sv(personeA -> 2, personeB -> 2).candidates should be(Set(personeA, personeB))
   }
   should "return candidate for party when people" in {
-    sv(PersonA -> 1).candidates(PartyA) should be(Set(PersonA))
+    sv(personeA -> 1).candidates(PartyA) should be(Set(personeA))
   }
   should "return no candidates for unknown party" in {
-    sv(PersonA -> 1).candidates(PartyB) should be(Set.empty)
+    sv(personeA -> 1).candidates(PartyB) should be(Set.empty)
   }
   should "derive new vote by adjusting counts according to model" in {
     val increment = new Model() {
