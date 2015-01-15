@@ -1,0 +1,25 @@
+package Elections
+
+case class Percentage(value: BigDecimal) extends Ordered[Percentage] {
+  def compare(that: Percentage): Int = value.compare(that.value)
+
+  override def toString: String = value + "%"
+
+  def +(that: Percentage): Percentage = Percentage(value + that.value)
+  def -(that: Percentage): Percentage = Percentage(value - that.value)
+
+  /**
+   * @return this percentage of supplied value
+   */
+  def of(value: BigDecimal): BigDecimal = value * this.value / 100
+}
+
+object Percentage {
+  val Zero = Percentage(0)
+
+  implicit def Int2Percentage(value: Int) = new Percentage(value)
+  implicit def Double2Percentage(value: Double) = new Percentage(value)
+  implicit def BigDecimal2Percentage(value: BigDecimal) = new Percentage(value)
+
+  def apply(numerator: BigDecimal, denominator: BigDecimal): Percentage = new Percentage(100 * numerator / denominator)
+}
