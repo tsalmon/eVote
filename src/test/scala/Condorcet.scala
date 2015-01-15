@@ -1,4 +1,3 @@
-
 package Condorcet
 
 import org.scalatest._
