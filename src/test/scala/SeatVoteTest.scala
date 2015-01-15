@@ -36,7 +36,7 @@ class SeatVoteTest extends FlatSpec with Matchers {
   should "expose set of all candidates when people" in {
     sv(personeA -> 2, personeB -> 2).candidates should be(Set(personeA, personeB))
   }
-  should "return candidate for party when people" in {
+  should "return candidates for party when people" in {
     sv(personeA -> 1).candidates(PartyA) should be(Set(personeA))
   }
   should "return no candidates for unknown party" in {
