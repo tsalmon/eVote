@@ -1,3 +1,4 @@
+/*
 package Elections
 
 import java.lang.IllegalArgumentException
@@ -49,3 +50,4 @@ class SeatVote(val seat: Seat, candidateToCount: Map[Candidates, Int]) extends V
     }.toMap)
   }
 }
+*/

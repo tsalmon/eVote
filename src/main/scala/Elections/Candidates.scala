@@ -1,3 +1,4 @@
+/*
 package Elections
 
 sealed trait Candidates {
@@ -15,3 +16,4 @@ case class Party(name: String) extends Candidates {
 case class Persone(name: String, party: Party) extends Candidates {
   override val toString: String = name + " (" + party + ")"
 }
+*/
