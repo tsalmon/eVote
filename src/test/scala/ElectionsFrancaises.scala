@@ -52,7 +52,11 @@ class PresidentialElectionsResultProcessing extends ElectionsResultProcessing[Pr
       //println(t(0))
       //println(t(1))
       //ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys.head
-      Array[Candidate](t(0), t(1))
+      if(t.size == 2){
+        Array[Candidate](t(0), t(1))
+      } else {
+        Array[Candidate](t(0))
+      }
     }
   }
 }
