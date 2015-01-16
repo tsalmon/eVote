@@ -1,5 +1,7 @@
+package GUI
+import Elections._
+
 import scala.swing._
-import ElectionFrancaise._
 
 class UI extends MainFrame{ 
   title = "Votalisk"
