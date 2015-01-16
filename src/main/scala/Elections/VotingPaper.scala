@@ -13,7 +13,7 @@ abstract class VotingPaper(val notificationName: String, val district: District)
   // Represents voting process
   def performVote
 
-  private var confirmed = false
+  protected var confirmed = false
 
   // Send VotingPaper to ElectionsManager by notification and after that votingpaper can't be modified
 
