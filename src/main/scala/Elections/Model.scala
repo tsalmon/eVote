@@ -1,3 +1,4 @@
+/*
 package Elections
 
 trait Model {
@@ -6,3 +7,4 @@ trait Model {
    */
   def apply(vote: SeatVote): Map[Candidates, Int]
 }
+*/

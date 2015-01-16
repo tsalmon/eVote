@@ -5,7 +5,7 @@ import Elections._
 import ElectionsResultProcessing.ElectionsResultProcessing
 
 class ElectionsTest extends FlatSpec{
-  "Condorcet" should "return test" {
+  "Condorcet" should "return test" in {
     
   }
 }

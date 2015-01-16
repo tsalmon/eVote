@@ -1,3 +1,4 @@
+/*
 package Elections
 
 trait Vote {
@@ -26,3 +27,4 @@ trait Vote {
    */
   def project(delta: Model): Vote
 }
+*/

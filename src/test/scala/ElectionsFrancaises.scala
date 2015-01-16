@@ -1,4 +1,3 @@
-
 package ElectionsTest
 
 import org.scalatest._
