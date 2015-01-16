@@ -28,7 +28,7 @@ class Doodle(val title: String, val location: String, val description: String, v
       case None => vp.vote
     }
 
-    vp.confirm
+    vp.confirm(participant)
   }
 
 
@@ -89,7 +89,7 @@ class DoodleManager(val limit:Option[Int], val location:Location, val single: Bo
   }
 
   override def printVotes = {
-    votes.foreach { v => println(v)}
+    votes.foreach { v => {println(v);v.counted()}}
   }
 }
 
@@ -105,7 +105,7 @@ case class IfNeedBe() extends Availability
 
 class Location(name: String) extends District(name)
 
-abstract class DoodleVote(val member: DoodleMember, notificationName: String, location: Location, timeSlots: List[TimeSlot]) extends VotingPaper(notificationName, location){
+abstract class DoodleVote(val member: DoodleMember, notificationName: String, location: Location, timeSlots: List[TimeSlot]) extends VotingPaperReceipt(notificationName, location){
 
   //On propose à un participant une liste des creneaux possibles
   type VoteInput = List[TimeSlot]
@@ -205,7 +205,7 @@ trait IfNeedBeOption extends DoodleVote{
 }
 
 //Class de participant d'un Doodle
-class DoodleMember(val fullname: String, override val district: Location = null) extends Voting{
+class DoodleMember(val fullname: String, override val district: Location = null) extends Voting with ObserverReceipt{
   def createDoodle(title: String, location: String, description: String, participants: List[DoodleMember], timeSlots: List[TimeSlot], limit: Option[Int], single: Boolean, public: Boolean, ifNeedBeOption: Boolean) =
     new Doodle(title, location, description, this, participants, timeSlots, limit, single, public, ifNeedBeOption)
 }
