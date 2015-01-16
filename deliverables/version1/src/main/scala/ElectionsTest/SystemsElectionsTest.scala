@@ -1,7 +1,7 @@
-/*package ElectionsTest
+package ElectionsTest
 
 import Elections._
-import ElectionsResultProcessing.ElectionsResultProcessing
+import ElectionsResultProcessing.{ElectionsResultProcessingMajority, ElectionsResultProcessing}
 
 import scala.collection.immutable.ListMap
 
@@ -11,13 +11,20 @@ case class Region(override val name:String, departments:Department*) extends Com
 case class Country(override val name:String, regions:Region*) extends ComposedDistrict[Region](name, Set(regions: _*)){}
 
 
-class PresidentialElections(override val candidates:List[Electable], override val votes: List[PresidentialElectionsVotingPaper]) extends Elections(candidates, votes) {
+class PresidentialElections(override val candidates:List[Candidate],
+                            override val votes: List[PresidentialElectionsVotingPaper])
+  extends Elections(candidates, votes) {
   type VoteResult = Candidate
+  //override var listResults: List[(Candidate, Int)] = _
 }
 
-class PresidentialElectionsResultProcessing extends ElectionsResultProcessing[PresidentialElections]{
-  def calculateResult(elections: PresidentialElections):elections.VoteResult = {
+class PresidentialElectionsResultProcessing extends ElectionsResultProcessingMajority[PresidentialElections]{
+  var listResult: List[(Any, Int)] = Nil
+  var listResultRate : List[(Any, Double)] = Nil
+
+  def calculateResult(elections: PresidentialElections): elections.VoteResult = {
     val votes : List[PresidentialElectionsVotingPaper] = elections.votes
+
     val stats = scala.collection.mutable.Map[Candidate, Int]()
     for(vote <- votes) {
       vote.output match {
@@ -26,12 +33,20 @@ class PresidentialElectionsResultProcessing extends ElectionsResultProcessing[Pr
         case _ => ()
       }
     }
+
+    for(candidate <- ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys){
+        listResult = (candidate, stats(candidate)) :: listResult
+    }
+
+    listResultRate = calculateRate(listResult, elections.votes.size)
+
     ListMap(stats.toSeq.sortWith(_._2 > _._2):_*).keys.head
   }
 }
 
 
-class PresidentialElectionsVotingPaper(override  val notificationName: String, override val district: District) extends VotingPaper(notificationName, district){
+class PresidentialElectionsVotingPaper(override  val notificationName: String,
+                                       override val district: District) extends VotingPaper(notificationName, district){
   type VoteInput = Array[Candidate]
   type VoteOutput = Option[Candidate]
 
@@ -44,7 +59,7 @@ class PresidentialElectionsVotingPaper(override  val notificationName: String, o
     println("Please, choose your candidate \n 1."+input(0)+" \n 2."+input(1)+"  \n 3."+input(2))
     var choice: Int = 0
     try {
-      choice = Console.readInt()
+      choice = Console.readInt;
     } catch {
       case e: NumberFormatException => println("Wrong choice")
     }
@@ -65,7 +80,9 @@ class PresidentialElectionsVotingPaper(override  val notificationName: String, o
   }
 }
 
-class PresidentialElectionsManager(override val notificationName: String, override val electors: Set[Voting], val candidates: Array[Candidate]) extends ElectionsManager[PresidentialElections, PresidentialElectionsVotingPaper](notificationName, electors) {
+class PresidentialElectionsManager(override val notificationName: String, override val electors: Set[Voting],
+val candidates: Array[Candidate])
+extends ElectionsManager[PresidentialElections, PresidentialElectionsVotingPaper](notificationName, electors) {
   def createVotingPaper(voting: Voting) = {
     val votingPaper = new PresidentialElectionsVotingPaper(notificationName, voting.district())
     votingPaper.input = candidates
@@ -78,7 +95,7 @@ class PresidentialElectionsManager(override val notificationName: String, overri
 }
 
 
-object ElectionsTest extends App {
+object SystemsElectionsTest extends App{
   val paris = Commune("Paris")
   val strasbourg = Commune("Strasbourg")
   val france = Country("France", Region("Alsace", Department("Bas-Rhin", strasbourg)), Region("Ile-de-France", Department("Paris", paris)))
@@ -87,13 +104,14 @@ object ElectionsTest extends App {
     new Candidate("Adam", "Smith"),
     new Candidate("John", "Brown"),
     new Candidate("Leonard", "Bold"))
-
-  val electors: Set[Voting] = Set(
+1
+  val electors:Set[Voting] = Set(
     new Elector("Parnell", "Marzullo", paris),
     new Elector("Kendricks", "Galt", paris),
     new Elector("Margalit", "Sanders", paris),
     new Elector("Vannie", "O'meara", strasbourg),
-    new Elector("Aime", "Mannion", strasbourg))
+  new Elector("Kendricks", "Galt", paris),
+  new Elector("Margalit", "Sanders", paris))
 
   val manager = new PresidentialElectionsManager("presidentialElections", electors, candidates)
 
@@ -108,6 +126,14 @@ object ElectionsTest extends App {
   val elections = manager.createElections
 
   val processing = new PresidentialElectionsResultProcessing()
+  print("Amount of electors: ")
+  println(elections.votes.size)
+  print("list of candidate: ")
+  println(elections.candidates.toString())
+  print("numero 1: ")
   println(processing.calculateResult(elections))
+  print("list of result (%): ")
+  println(processing.listResultRate.toString())
+  print("winner of majority")
+  println(processing.calculateMajority(processing.listResultRate))
 }
-*/
