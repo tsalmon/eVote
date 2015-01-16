@@ -1,5 +1,5 @@
 SRC = ./
-SOURCES= ./Elections/Group.scala	./Elections/District.scala	./Elections/Electable.scala	./Elections/Voting.scala	./Elections/ElectableGroup.scala	./Elections/Person.scala	./Elections/Candidate.scala ./Elections/NotificationCenter.scala	./Elections/VotingPaper.scala	./Elections/Elections.scala	./Elections/Elector.scala	./Elections/ElectionsManager.scala	./Statistics/Statistics.scala	./ElectionsResultProcessing/ElectionsResultProcessing.scala	./ElectionsTest/ElectionsTest.scala
+SOURCES= ./Elections/Group.scala	./Elections/District.scala	./Elections/Electable.scala	./Elections/Voting.scala	./Elections/ElectableGroup.scala	./Elections/Person.scala	./Elections/Candidate.scala ./Elections/NotificationCenter.scala	./Elections/VotingPaper.scala	./Elections/Elections.scala	./Elections/Elector.scala	./Elections/ElectionsManager.scala	./Statistics/Statistics.scala	./ElectionsResultProcessing/ElectionsResultProcessing.scala	./ElectionsTest/ElectionsTest.scala ./Doodle/Doodle.scala ./Doodle/DoodleTest.scala
 
 S = scala
 SC = scalac -d "./"
