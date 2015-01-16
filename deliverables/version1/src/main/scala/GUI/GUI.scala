@@ -1,4 +1,6 @@
 import scala.swing._
+import Elections._
+
 import ElectionFrancaise._
 
 class UI extends MainFrame{ 

@@ -1,3 +1,8 @@
+import Elections._
+import ElectionsResultProcessing._
+
+import scala.collection.immutable.ListMap
+
 case class Commune(override val name:String) extends LeafDistrict(name){}
 case class Department(override val name:String, communes:Commune*)
   extends ComposedDistrict[Commune](name, Set(communes: _*)){}
