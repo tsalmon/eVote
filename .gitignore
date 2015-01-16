@@ -27,3 +27,6 @@ project/plugins/project/
 eVote.iml
 .idea/
 Thumbs.db
+
+# vim
+*.swp
