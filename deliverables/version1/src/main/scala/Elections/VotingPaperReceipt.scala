@@ -1,5 +1,7 @@
 package Elections
 
+import Elections.Receipt
+
 object idManager{
   private var nextid=0;
   def newId(): String ={
@@ -19,7 +21,9 @@ abstract class VotingPaperReceipt(notificationName: String, district: District) 
   }
 
   def counted() : Unit={
-    NotificationCenter.postNotification(this.id)
+    var receipt=new Receipt(notificationName,district);
+    receipt.input=this.input;
+    NotificationCenter.postNotification(this.id, receipt);
   }
 
 }
