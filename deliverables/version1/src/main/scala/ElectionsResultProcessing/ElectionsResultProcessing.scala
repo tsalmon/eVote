@@ -14,5 +14,12 @@ abstract class ElectionsResultProcessing[ElectionsType <: Elections]{
 
 abstract class ElectionsResultProcessingMajority[ElectionsType <: Elections]
   extends ElectionsResultProcessing[ElectionsType] {
-  override def calculateMajority(listResultRate:List[(Any,Double)]) = listResultRate.sortWith((x,y)=>x._2>y._2).head
+  def calculate(listResultRate:List[(Any,Double)]) = listResultRate.sortWith((x,y)=>x._2>y._2).head
+}
+
+
+abstract class ElectionsResultProcessingProportional[ElectionsType <: Elections]
+  extends ElectionsResultProcessing[ElectionsType] {
+  def calculate(listResultRate:List[(Any,Double)], nbSeat: Int) =
+    listResultRate.map((x) => (x._1,(x._2*nbSeat/100).round))
 }
