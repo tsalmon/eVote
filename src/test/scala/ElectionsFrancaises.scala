@@ -166,8 +166,12 @@ class ElectionsTest extends FlatSpec{
 
   "ElectionTest: Tour" should "return the candidate more selected" in {
     var resultat = test_tour("elections 1er tour", electors, candidates)
-    println("Resultat premier tour: " + resultat(0) + ", " + resultat(1))
-    resultat = test_tour("elections 2e tour", electors, resultat)
-    println("Resultat deuxieme tour: " + resultat(0))
+    if(resultat.size == 1){
+      println("Resultat premier tour(gagnant: " + resultat(0))      
+    } else {
+      println("Resultat premier tour: " + resultat(0) + ", " + resultat(1))
+      resultat = test_tour("elections 2e tour", electors, resultat)
+      println("Resultat deuxieme tour: " + resultat(0))
+    }
   }
 }
